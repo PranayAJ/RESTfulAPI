@@ -64,3 +64,5 @@ Route::resource('products.buyers',ProductBuyersController::class);
 Route::resource('products.categories',ProductCategoryController::class);
 Route::resource('products.buyers.transactions', ProductBuyerTransactionsController::class);
 
+Route::get('users/verify/{token}', [\App\Http\Controllers\User\UsersController::class, 'verify'])->name('verify');
+

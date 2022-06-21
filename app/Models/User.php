@@ -78,4 +78,12 @@ class User extends Authenticatable
     public function setEmailAttribute($email){
         $this->attributes['email'] = strtolower($email);
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+        self::created(function(User $user) {
+            Mail::to($user)->send(new UserCreated($user));
+        });
+    }
 }

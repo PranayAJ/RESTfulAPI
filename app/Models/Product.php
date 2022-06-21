@@ -24,6 +24,16 @@ class Product extends Model
         'pivot'
     ];
 
+    public static function boot() {
+        parent::boot();
+        self::updated(function(Product $product) {
+            if($product->quantity == 0 && $product->isAvailable()) {
+                $product->status = Product::UNAVAILABLE_PRODUCT;
+                $product->save();
+            }
+        });
+    }
+
     public function isAvailable(){
         return $this->status == PRODUCT::AVAILABLE_PRODUCT;
     }

@@ -27,7 +27,7 @@ class SellerProductsController extends ApiController
         $this->validate($request, $rules);
         $data = $request->all();
         $data['status'] = Product::UNAVAILABLE_PRODUCT;
-        $data['image'] = '1.jpg';
+        $data['image'] = $request->image->store('');
         $data['seller_id'] = $seller->id;
 
         $product = Product::create($data);
@@ -61,7 +61,11 @@ class SellerProductsController extends ApiController
             }
         }
 
-        // Todo: image update remaining
+        if($request->hasFile('image')) {
+            Storage::delete($product->image);
+            $product->image = $request->image->store('');
+        }
+        
         if($product->isClean()) {
             return $this->errorResponse('You have not updated any value', 422);
         }
@@ -73,6 +77,7 @@ class SellerProductsController extends ApiController
     public function destroy(Seller $seller, Product $product)
     {
         $this->verifySeller($seller, $product);
+        Storage::delete($product->image);
         $product->delete();
         return $this->showOne($product);
     }
