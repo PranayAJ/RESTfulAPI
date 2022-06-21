@@ -16,17 +16,22 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // 1. Empty all the tables
+        User::flushEventListeners();
+        Category::flushEventListeners();
+        Product::flushEventListeners();
+        Transaction::flushEventListeners();
+
         if (App::environment() === 'production') exit();
 
         DB::statement('SET FOREIGN_KEY_CHECKS = 0');
 
         // Truncate all tables, except migrations
-        $tables = DB::select('SHOW TABLES');
-        $tempAttributeName = "Tables_in_" . env('DB_DATABASE');
-        foreach ($tables as $table) {
-            if ($table->$tempAttributeName !== 'migrations')
-                DB::table($table->$tempAttributeName)->truncate();
-        }
+        // $tables = DB::select('SHOW TABLES');
+        // $tempAttributeName = "Tables_in_" . env('DB_DATABASE');
+        // foreach ($tables as $table) {
+        //     if ($table->$tempAttributeName !== 'migrations')
+        //         DB::table($table->$tempAttributeName)->truncate();
+        // }
 
         // 2. Seed the database using required Factory
         $numOfUsers = 200;

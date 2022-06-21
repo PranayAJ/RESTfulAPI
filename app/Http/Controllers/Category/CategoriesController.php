@@ -11,7 +11,7 @@ class CategoriesController extends ApiController
 {
     public function index(): JsonResponse
     {
-        $categories = Category::all();
+        $categories = Category::paginate();
         return $this->showAll($categories);
     }
     public function store(Request $request): JsonResponse

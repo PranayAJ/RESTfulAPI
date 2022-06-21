@@ -2,21 +2,21 @@
 
 namespace App\Mail;
 
-use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
-class UserCreated extends Mailable
+class UserMailChanged extends Mailable
 {
     use Queueable, SerializesModels;
-    public User $user;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
+    public User $user;
     public function __construct(User $user)
     {
         $this->user = $user;
@@ -29,6 +29,6 @@ class UserCreated extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.welcome')->subject('Please Verify Email');
+        return $this->markdown('emails.confirm')->subject('please confirm your mail');
     }
 }

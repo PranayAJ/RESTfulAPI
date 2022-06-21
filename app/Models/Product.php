@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Transformers\ProductTransformer;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
 {
@@ -23,6 +24,8 @@ class Product extends Model
     protected $hidden = [
         'pivot'
     ];
+
+    public $transformer = ProductTransformer::class;
 
     public static function boot() {
         parent::boot();

@@ -98,6 +98,7 @@ class UsersController extends ApiController
         if($request->has('email')){
             $user->verified = User::UNVERIFIED_USER;
             $user->verification_token = User::generateVerificationCode();
+            dd($user->verification_token);
             $user->email = $request->email;
         }
         if($request->has('password')){
@@ -139,5 +140,15 @@ class UsersController extends ApiController
         $user->save();
 
         return $this->showMessage('The account has been verified successfully!');
+    }
+
+    public function resend(User $user){
+        if(! $user->isVerified()){
+            return $this->errorResponse('The user is already verified',400);
+        }
+        retry(5, function() use($user){
+            Mail->to($user)->send(new UserCreated($user));
+        },100);
+        return $this->errorResponse('The verification mail has been sent');
     }
 }

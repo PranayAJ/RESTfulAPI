@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Mail\UserCreated;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Mail;
+use App\Transformers\UserTransformer;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
@@ -55,6 +58,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public $transformer = UserTransformer::class;
+
     public function isVerified(){
         return $this->verified = User::VERIFIED_USER;
     }
@@ -82,8 +87,17 @@ class User extends Authenticatable
     protected static function boot()
     {
         parent::boot();
-        self::created(function(User $user) {
-            Mail::to($user)->send(new UserCreated($user));
-        });
+        retry(5, function(){
+            self::created(function(User $user) {
+                Mail::to($user)->send(new UserCreated($user));
+            });
+        },100);
+
+        parent::boot();
+        retry(5, function(){
+            self::created(function(User $user) {
+                Mail::to($user)->send(new UserMailChanged($user));
+            });
+        },100);
     }
 }

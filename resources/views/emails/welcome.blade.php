@@ -1,12 +1,13 @@
+
 @component('mail::message')
-# Introduction
+# Hello {{ $user->name }}
 
-The body of your message.
+Thank you for creating an account with us. Please verify your email using this link:
 
-@component('mail::button', ['url' => ''])
-Button Text
+@component('mail::button', ['url' => route('verify', $user->verification_token)])
+    Verify Email
+@endcomponent
+    Thanks, <br>
+    Restful API
 @endcomponent
 
-Thanks,<br>
-{{ config('app.name') }}
-@endcomponent
